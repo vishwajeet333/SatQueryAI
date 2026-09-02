@@ -1,0 +1,14 @@
+# SatQuery AI - Deep Learning & Remote Sensing Dependencies
+# SIH 2026 Problem Statement ID: 26167
+
+torch>=2.0.0
+torchvision>=0.15.0
+transformers>=4.35.0
+numpy>=1.24.0
+scipy>=1.10.0
+tifffile>=2023.7.10
+pillow>=10.0.0
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.4.0
+python-multipart>=0.0.6

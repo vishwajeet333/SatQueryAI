@@ -21,7 +21,9 @@ export const TacticalIncidentFeed: React.FC = () => {
     speakText, 
     stopSpeaking,
     generateReport,
-    fieldInfrastructure
+    fieldInfrastructure,
+    setActiveTrace,
+    setIsTraceOpen
   } = useSatQuery();
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -117,21 +119,33 @@ export const TacticalIncidentFeed: React.FC = () => {
 
                 {/* Direct Action Trigger inside message */}
                 {isAssistant && (
-                  <div className="mt-2.5 flex items-center gap-2">
+                  <div className="mt-2.5 flex items-center flex-wrap gap-2">
                     <button
                       onClick={() => speakText(msg.text)}
                       className="px-2 py-1 rounded bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-[10px] font-mono flex items-center gap-1 transition-all"
                     >
                       <Volume2 className="w-3 h-3 text-cyan-400" />
-                      <span>Audio Brief</span>
+                      <span>Audio</span>
                     </button>
                     <button
                       onClick={generateReport}
                       className="px-2 py-1 rounded bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/30 text-emerald-300 text-[10px] font-mono flex items-center gap-1 transition-all"
                     >
                       <FileText className="w-3 h-3 text-emerald-400" />
-                      <span>View Rescue Report</span>
+                      <span>Rescue Report</span>
                     </button>
+                    {msg.execution_trace && (
+                      <button
+                        onClick={() => {
+                          setActiveTrace(msg.execution_trace || null);
+                          setIsTraceOpen(true);
+                        }}
+                        className="px-2 py-1 rounded bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-300 text-[10px] font-mono flex items-center gap-1 transition-all"
+                      >
+                        <Radio className="w-3 h-3 text-cyan-400" />
+                        <span>Execution Trace</span>
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

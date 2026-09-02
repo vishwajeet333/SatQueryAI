@@ -109,25 +109,88 @@ export interface LatencyBreakdown {
   total_seconds: number;
 }
 
-export interface OfficerQueryResponse {
-  scenario_id: string;
-  query: string;
-  language: Language;
-  response_text: string;
-  focused_id?: string;
-  grounding: GroundingItem[];
-  neural_segmentation: {
-    hazard_type: string;
-    neural_model: string;
-    pixels_segmented: number;
-    total_area_km2: number;
-    mean_confidence: number;
-    generated_polygon: [number, number][];
-    inference_latency_ms: number;
+export interface ModelRegistryEntry {
+  model_id: string;
+  name: string;
+  architecture: string;
+  domain: string;
+  input_modalities: string[];
+  adapted_dataset: string;
+  parameter_count: string;
+  status: string;
+}
+
+export interface AuditableExecutionTrace {
+  trace_id: string;
+  task_selected: string;
+  models_invoked: ModelRegistryEntry[] | any[];
+  input_compatibility: {
+    source: string;
+    crs: string;
+    channels: number;
+    resolution_gsd: string;
+    modality: string;
+    format_valid: boolean;
   };
-  field_infrastructure: FieldInfrastructure;
-  rescue_report: RescueReport;
-  latency_breakdown: LatencyBreakdown;
+  co_registration_metrics: {
+    co_registered: boolean;
+    spatial_overlap_pct: number;
+    crs_match: boolean;
+  };
+  neural_forward_params: {
+    tensor_shape: number[];
+    spectral_bands_utilized: string[];
+    activation_threshold: number;
+    device: string;
+  };
+  detected_bigearthnet_classes: Array<{ label: string; confidence: number }>;
+  latency_profile: {
+    input_validation_ms: number;
+    neural_forward_ms: number;
+    osm_topology_ms: number;
+    report_generation_ms: number;
+    total_pipeline_ms: number;
+    total_seconds: number;
+  };
+}
+
+export interface RasterMetadata {
+  raster_id: string;
+  filename: string;
+  crs: string;
+  channels: number;
+  band_names: string[];
+  dimensions: { height: number; width: number };
+  resolution_meters: number;
+  modality_detected: string;
+  min_reflectance: number;
+  max_reflectance: number;
+  co_registered: boolean;
+  parse_latency_ms: number;
+}
+
+export interface BenchmarkEntry {
+  id: string;
+  name: string;
+  domain: string;
+  metric: string;
+  top1_accuracy?: string;
+  map_score?: string;
+  vqa_accuracy?: string;
+  grounding_miou?: string;
+  overall_accuracy?: string;
+  change_f1_score?: string;
+  status: string;
+}
+
+export interface BenchmarkData {
+  evaluation_summary: {
+    status: string;
+    benchmark_count: number;
+    overall_score: string;
+    adaptation_status: string;
+  };
+  benchmarks: BenchmarkEntry[];
 }
 
 export interface Message {
@@ -137,18 +200,7 @@ export interface Message {
   timestamp: string;
   grounding?: GroundingItem[];
   rescue_report?: RescueReport;
+  execution_trace?: AuditableExecutionTrace;
   latency?: LatencyBreakdown;
   suggested_queries?: string[];
-}
-
-export interface SpectralIndex {
-  id: string;
-  name: string;
-  formula: string;
-  sensor_bands: string;
-  description: string;
-  color_ramp: string[];
-  labels: string[];
-  mean_value: number;
-  histogram: number[];
 }

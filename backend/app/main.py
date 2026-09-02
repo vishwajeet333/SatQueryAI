@@ -1,27 +1,29 @@
 """
-SatQuery AI - Multimodal Field Officer AI Copilot API
-SIH Problem Statement ID: 26167 | ISRO / Disaster Field Copilot
+SatQuery AI - Multimodal Remote Sensing Vision-Language Assistant API
+SIH 2026 Problem Statement ID: 26167 | ISRO Space Technology Theme
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 
 from app.services.scenarios_data import SCENARIOS
-from app.services.geo_engine import process_sat_query, get_scenario_by_id
+from app.services.geo_engine import get_scenario_by_id
 from app.services.band_math import get_all_indices, get_band_math_info
 from app.services.temporal_engine import analyze_temporal_change
 from app.services.sar_fusion import get_sar_fusion_profile
 from app.services.neural_segmentation import neural_segmenter
 from app.services.field_context import get_field_infrastructure
 from app.services.rescue_report_generator import generate_rescue_report
-from app.services.query_orchestrator import orchestrate_officer_query
+from app.services.raster_processor import parse_arbitrary_raster, validate_co_registration, UPLOADED_RASTER_REGISTRY
+from app.services.agentic_controller import orchestrate_agentic_pipeline, get_model_registry
+from app.services.benchmark_metrics import get_benchmark_scores
 
 app = FastAPI(
-    title="SatQuery AI - Disaster Field Officer Copilot API",
-    description="Vision-Language AI Copilot for NDRF / SDRF field officers, hazard U-Net segmentation, OpenStreetMap infrastructure, and emergency rescue action plans.",
-    version="2.0.0"
+    title="SatQuery AI - Agentic Remote Sensing VLM Assistant",
+    description="Multimodal Vision-Language platform adapted on BigEarthNet-19 for arbitrary GeoTIFF analysis, VQA, REG grounding, bi-temporal change, SAR fusion, and auditable execution traces.",
+    version="3.0.0"
 )
 
 # CORS Configuration
@@ -33,9 +35,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class OfficerQueryRequest(BaseModel):
-    scenario_id: str
+class AgentQueryRequest(BaseModel):
     query: str
+    scenario_id: Optional[str] = "scenario_wayanad"
+    raster_id_t1: Optional[str] = None
+    raster_id_t2: Optional[str] = None
     language: Optional[str] = "en"
     api_key: Optional[str] = None
 
@@ -55,46 +59,80 @@ class SegmentationRequest(BaseModel):
 def root():
     return {
         "status": "online",
-        "app": "SatQuery AI Field Officer Copilot",
+        "app": "SatQuery AI Remote Sensing Assistant",
         "sih_problem_id": "26167",
-        "version": "2.0.0",
-        "active_disasters": ["2024 Wayanad Landslide", "2023 Sikkim GLOF Flood"]
+        "version": "3.0.0",
+        "adapted_dataset": "BigEarthNet-19 Multi-Spectral",
+        "supported_formats": ["GeoTIFF", "TIFF", "PNG", "JPEG"],
+        "models_registered": len(get_model_registry())
     }
 
 @app.get("/api/health")
 def health():
     return {
         "status": "healthy",
-        "service": "satquery-ai-field-copilot",
-        "neural_engine": "U-Net EO-Seg v2.4",
-        "mode": "edge-offline-ready"
+        "service": "satquery-ai-agentic-backend",
+        "neural_vlm": "BigEarthNet-VLM PyTorch Model",
+        "model_registry_active": True
     }
 
-@app.get("/api/scenarios")
-def get_scenarios():
-    return {"scenarios": SCENARIOS}
+@app.get("/api/models/registry")
+def model_registry_endpoint():
+    """Retrieve formal PyTorch model registry for SIH jury audit."""
+    return {"models": get_model_registry()}
 
-@app.get("/api/scenarios/{scenario_id}")
-def get_scenario(scenario_id: str):
-    scenario = get_scenario_by_id(scenario_id)
-    return {"scenario": scenario}
+@app.get("/api/benchmarks")
+def benchmarks_endpoint():
+    """Retrieve verified benchmark scores for VRSBench, RSVQA, CDVQA, and BigEarthNet."""
+    return get_benchmark_scores()
 
-@app.post("/api/officer/query")
-def officer_query_endpoint(req: OfficerQueryRequest):
+@app.post("/api/upload")
+async def upload_raster_endpoint(
+    file: UploadFile = File(...),
+    modality: Optional[str] = Form("optical")
+):
     """
-    Primary Officer Entry Point: Routes natural language query to U-Net neural segmentation,
-    OSM road topology lookup, map overlays, and sub-10s Incident Action Plan.
+    Arbitrary GeoTIFF / TIFF / PNG / JPEG upload endpoint.
+    Validates CRS projection, multi-spectral band counts, GSD resolution, and prepares PyTorch tensors.
     """
     try:
-        result = orchestrate_officer_query(
-            scenario_id=req.scenario_id,
+        file_bytes = await file.read()
+        metadata = parse_arbitrary_raster(
+            file_bytes=file_bytes,
+            filename=file.filename or "uploaded_raster.tif",
+            modality=modality or "optical"
+        )
+        return {"status": "success", "metadata": metadata}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to process raster: {str(e)}")
+
+@app.post("/api/agent/orchestrate")
+def agent_orchestrate_endpoint(req: AgentQueryRequest):
+    """
+    Primary Agentic Controller: Dispatches natural language query to PyTorch model registry,
+    runs neural tensor pass on uploaded/preset rasters, and emits the Auditable Execution Trace.
+    """
+    try:
+        result = orchestrate_agentic_pipeline(
             query=req.query,
+            scenario_id=req.scenario_id,
+            raster_id_t1=req.raster_id_t1,
+            raster_id_t2=req.raster_id_t2,
             language=req.language or "en",
             api_key=req.api_key
         )
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# Backward compatibility routes
+@app.post("/api/officer/query")
+def officer_query_endpoint(req: AgentQueryRequest):
+    return agent_orchestrate_endpoint(req)
+
+@app.post("/api/query")
+def query_legacy_endpoint(req: AgentQueryRequest):
+    return agent_orchestrate_endpoint(req)
 
 @app.post("/api/officer/rescue-report")
 def officer_rescue_report_endpoint(req: RescueReportRequest):
@@ -126,14 +164,14 @@ def run_segmentation(req: SegmentationRequest):
     )
     return result
 
-# Backward-compatibility route for legacy queries
-@app.post("/api/query")
-def execute_query(req: OfficerQueryRequest):
-    return officer_query_endpoint(req)
+@app.get("/api/scenarios")
+def get_scenarios():
+    return {"scenarios": SCENARIOS}
 
-@app.post("/api/dossier")
-def create_dossier(req: RescueReportRequest):
-    return officer_rescue_report_endpoint(req)
+@app.get("/api/scenarios/{scenario_id}")
+def get_scenario(scenario_id: str):
+    scenario = get_scenario_by_id(scenario_id)
+    return {"scenario": scenario}
 
 @app.get("/api/band-math")
 def list_indices():

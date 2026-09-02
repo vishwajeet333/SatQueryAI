@@ -6,6 +6,9 @@ import { MapCanvas } from './components/MapCanvas';
 import { TacticalIncidentFeed } from './components/TacticalIncidentFeed';
 import { TemporalSwipe } from './components/TemporalSwipe';
 import { RescueReportModal } from './components/RescueReportModal';
+import { RasterUploadModal } from './components/RasterUploadModal';
+import { AuditableTraceModal } from './components/AuditableTraceModal';
+import { BenchmarkModal } from './components/BenchmarkModal';
 
 const SatQueryDashboard: React.FC = () => {
   return (
@@ -30,8 +33,11 @@ const SatQueryDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Instant 1-Click Printable Rescue Incident Action Plan */}
+      {/* Modals & Inspectors */}
       <RescueReportModal />
+      <RasterUploadModal />
+      <AuditableTraceModal />
+      <BenchmarkModal />
     </div>
   );
 };

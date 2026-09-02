@@ -15,7 +15,8 @@ export const OfficerCommandBar: React.FC = () => {
     isLoading, 
     latestLatency, 
     generateReport, 
-    language 
+    language,
+    setIsTraceOpen
   } = useSatQuery();
 
   const [inputVal, setInputVal] = useState('');
@@ -144,20 +145,24 @@ export const OfficerCommandBar: React.FC = () => {
           ))}
         </div>
 
-        {/* Real Latency Meter */}
+        {/* Real Latency & Auditable Trace Meter */}
         {latestLatency && (
-          <div className="flex items-center gap-2 shrink-0 bg-slate-950/80 px-2.5 py-1 rounded-lg border border-cyan-500/30 text-cyan-300 text-[10px]">
+          <div 
+            onClick={() => setIsTraceOpen(true)}
+            className="cursor-pointer flex items-center gap-2 shrink-0 bg-slate-950/80 hover:bg-slate-900 px-2.5 py-1 rounded-lg border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 text-[10px] transition-all"
+            title="Click to inspect Auditable Execution Trace (JSON & Visual)"
+          >
             <Clock className="w-3 h-3 text-cyan-400 animate-spin" style={{ animationDuration: '6s' }} />
             <span>
               ⚡ Analyzed in <strong className="text-white">{latestLatency.total_seconds}s</strong>
             </span>
             <span className="text-slate-500">|</span>
             <span className="text-slate-400">
-              U-Net: <strong className="text-slate-200">{latestLatency.neural_inference_ms}ms</strong>
+              VLM: <strong className="text-slate-200">{latestLatency.neural_inference_ms}ms</strong>
             </span>
             <span className="text-slate-500">|</span>
-            <span className="text-slate-400">
-              OSM Roads: <strong className="text-slate-200">{latestLatency.osm_infrastructure_ms}ms</strong>
+            <span className="text-cyan-400 font-bold underline">
+              View Trace
             </span>
           </div>
         )}
