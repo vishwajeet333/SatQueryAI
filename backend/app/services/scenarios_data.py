@@ -1,333 +1,155 @@
 """
-Preset Earth Observation missions and Indian satellite telemetry for SatQuery AI.
-Includes Cartosat-3, Resourcesat-2A, RISAT-1A SAR, INSAT-3DR, and NISAR simulation.
+Verified Real-World Indian Disaster Missions for Field Officer AI Copilot.
+Includes Sentinel-2 Optical, Sentinel-1 SAR, Cartosat-3, and RISAT-1A telemetry.
 """
 
 SCENARIOS = [
     {
-        "id": "scenario_uttarakhand",
-        "title": "Uttarakhand Cloudburst & Landslide Inundation",
-        "region": "Chamoli / Joshimath Valley, Uttarakhand",
-        "center": [30.5526, 79.5660],
-        "zoom": 13,
-        "primary_sensor": "Cartosat-3 (PAN + MX)",
-        "resolution": "0.28m GSD",
-        "acquisition_date": "2024-08-14 05:42 UTC",
-        "sun_elevation": "61.4°",
-        "sun_azimuth": "138.2°",
-        "description": "Flash flood & debris flow along Rishiganga and Alaknanda tributaries triggered by intense convective rainfall over glacial moraines.",
-        "tags": ["Disaster", "Landslide", "Cartosat-3", "DEM Slope"],
+        "id": "scenario_wayanad",
+        "title": "2024 Wayanad Landslide & Debris Torrent",
+        "region": "Chooralmala, Mundakkai & Meppadi, Kerala",
+        "center": [11.5360, 76.1360],
+        "zoom": 14,
+        "primary_sensor": "Sentinel-2 (10m) + Sentinel-1 SAR",
+        "resolution": "10m MSI / 0.5m Optical Aerial",
+        "acquisition_date": "2024-07-30 06:15 UTC",
+        "sun_elevation": "58.2°",
+        "sun_azimuth": "104.5°",
+        "description": "Devastating mass wasting and boulder torrent triggered by 572mm cloudburst rainfall in Western Ghats, severing Chooralmala bridge and inundating Mundakkai settlement.",
+        "tags": ["NDRF Priority", "Landslide", "Wayanad 2024", "Chooralmala", "Bridge Collapse"],
         "layers": {
             "optical": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80",
             "fcc": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
             "sar": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=80",
-            "ndvi_overlay": "linear-gradient(135deg, rgba(34,197,94,0.6), rgba(234,179,8,0.4), rgba(239,68,68,0.7))",
-            "pre_event_date": "2024-07-20",
-            "post_event_date": "2024-08-14"
+            "ndvi_overlay": "linear-gradient(135deg, rgba(239,68,68,0.7), rgba(245,158,11,0.5), rgba(34,197,94,0.4))",
+            "pre_event_date": "2024-07-22",
+            "post_event_date": "2024-07-30"
         },
-        "default_query": "Identify high-risk landslide scarps along steep slopes and highlight blocked road networks with estimated debris volume.",
+        "default_query": "Where are the blocked bridges and stranded settlements in Chooralmala?",
         "grounding_presets": [
             {
-                "id": "g1",
-                "label": "Active Landslide Scarp & Debris Fan",
+                "id": "w1",
+                "label": "Mundakkai Settlement Mudflow & Debris Fan",
                 "type": "polygon",
                 "color": "#ef4444",
                 "coordinates": [
-                    [30.559, 79.560],
-                    [30.564, 79.569],
-                    [30.556, 79.574],
-                    [30.550, 79.566]
+                    [11.5320, 76.1380],
+                    [11.5390, 76.1430],
+                    [11.5365, 76.1480],
+                    [11.5280, 76.1410]
                 ],
-                "area_km2": 1.42,
-                "confidence": 0.964,
-                "spectral_index": "BAI: 0.78, Slope: 41°",
+                "area_km2": 2.14,
+                "confidence": 0.978,
+                "spectral_index": "U-Net EO-Seg (Score: 0.98), NDVI loss: -0.74",
                 "threat_level": "CRITICAL",
-                "details": "Major mass wasting scarp with unconsolidated morainic debris deposit extending 1,850m downslope."
+                "details": "Massive mud-slurry zone covering Mundakkai village under 4.5m of mud and tree boulders. Estimated 400+ residents stranded."
             },
             {
-                "id": "g2",
-                "label": "Severed NH-7 Highway Segment",
+                "id": "w2",
+                "label": "Severed Chooralmala River Bridge (Isolated Island)",
                 "type": "polyline",
                 "color": "#f59e0b",
                 "coordinates": [
-                    [30.548, 79.561],
-                    [30.551, 79.565],
-                    [30.554, 79.568]
+                    [11.5342, 76.1345],
+                    [11.5360, 76.1380]
                 ],
-                "area_km2": 0.18,
-                "confidence": 0.981,
-                "spectral_index": "NDVI drop: -0.62",
-                "threat_level": "HIGH",
-                "details": "320m stretch of National Highway 7 completely buried under 4.2m of boulders and mud."
-            },
-            {
-                "id": "g3",
-                "label": "Stable Helipad & Staging Ground",
-                "type": "polygon",
-                "color": "#10b981",
-                "coordinates": [
-                    [30.545, 79.552],
-                    [30.549, 79.555],
-                    [30.547, 79.559],
-                    [30.543, 79.556]
-                ],
-                "area_km2": 0.35,
-                "confidence": 0.945,
-                "spectral_index": "Slope < 4°, DEM: 1890m",
-                "threat_level": "SAFE",
-                "details": "NDRF primary airdrop and relief staging node on solid rock terrace."
-            }
-        ]
-    },
-    {
-        "id": "scenario_godavari",
-        "title": "Godavari Basin Flood Inundation & SAR Cloud Penetration",
-        "region": "Rajahmundry & Konaseema, Andhra Pradesh",
-        "center": [16.9890, 81.7840],
-        "zoom": 12,
-        "primary_sensor": "RISAT-1A (C-band SAR) + Resourcesat-2A",
-        "resolution": "3.0m Stripmap",
-        "acquisition_date": "2024-07-28 18:15 UTC",
-        "sun_elevation": "N/A (Radar Night Pass)",
-        "sun_azimuth": "Descending Pass (284°)",
-        "description": "Severe monsoon surge causing embankment overflow. Heavy 100% stratus cloud cover penetrated via SAR VV/VH dual polarization backscatter.",
-        "tags": ["SAR", "Flood", "RISAT-1A", "Cloud-Penetration", "Agriculture"],
-        "layers": {
-            "optical": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1600&q=80",
-            "fcc": "https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?auto=format&fit=crop&w=1600&q=80",
-            "sar": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=80",
-            "ndvi_overlay": "linear-gradient(135deg, rgba(59,130,246,0.7), rgba(16,185,129,0.4), rgba(239,68,68,0.7))",
-            "pre_event_date": "2024-07-10",
-            "post_event_date": "2024-07-28"
-        },
-        "default_query": "Penetrate monsoon cloud cover using RISAT-1A SAR VV/VH backscatter and segment all submerged paddy fields and marooned villages.",
-        "grounding_presets": [
-            {
-                "id": "g201",
-                "label": "Submerged Paddy Agriculture (Specular Low Backscatter)",
-                "type": "polygon",
-                "color": "#3b82f6",
-                "coordinates": [
-                    [16.975, 81.765],
-                    [17.005, 81.775],
-                    [16.995, 81.810],
-                    [16.965, 81.795]
-                ],
-                "area_km2": 18.75,
-                "confidence": 0.982,
-                "spectral_index": "SAR σ0 (VV): -22.4 dB, NDWI: +0.74",
+                "area_km2": 0.08,
+                "confidence": 0.992,
+                "spectral_index": "OSM Way #84912 - Snapped Road Network",
                 "threat_level": "CRITICAL",
-                "details": "Extensive standing water depth exceeding 1.2m over 1,875 hectares of paddy."
+                "details": "Concrete span washed away by 12,000 cusecs river surge. Mundakkai and Attamala are completely cut off by road."
             },
             {
-                "id": "g202",
-                "label": "Marooned Habitation Island (Isolated Settlement)",
+                "id": "w3",
+                "label": "Safe Staging Base & Helipad (Meppadi Higher Secondary)",
                 "type": "polygon",
-                "color": "#ec4899",
-                "coordinates": [
-                    [16.985, 81.782],
-                    [16.992, 81.786],
-                    [16.989, 81.794],
-                    [16.981, 81.789]
-                ],
-                "area_km2": 0.62,
-                "confidence": 0.957,
-                "spectral_index": "Double-bounce Corner Reflectance",
-                "threat_level": "EMERGENCY",
-                "details": "Appx 2,400 residents isolated with breached access roads. Immediate boat evacuation corridor required."
-            },
-            {
-                "id": "g203",
-                "label": "Intact Flood Protection Bund",
-                "type": "polyline",
                 "color": "#10b981",
                 "coordinates": [
-                    [16.960, 81.750],
-                    [16.970, 81.770],
-                    [16.980, 81.800]
+                    [11.5490, 76.1230],
+                    [11.5530, 76.1240],
+                    [11.5520, 76.1280],
+                    [11.5480, 76.1270]
                 ],
-                "area_km2": 0.45,
-                "confidence": 0.973,
-                "spectral_index": "Elevation crest +3.8m MSL",
-                "threat_level": "MONITORED",
-                "details": "Engineered revetment holding water level with 0.8m freeboard margin."
+                "area_km2": 0.42,
+                "confidence": 0.965,
+                "spectral_index": "Stable Elevation: 890m MSL, Zero Inundation",
+                "threat_level": "SAFE",
+                "details": "Primary staging ground designated for NDRF 4th Battalion and Indian Air Force ALH Dhruv air-bridge."
             }
         ]
     },
     {
-        "id": "scenario_punjab",
-        "title": "Punjab Stubble Burning & Aerosol Thermal Hotspots",
-        "region": "Sangrur & Patiala districts, Punjab",
-        "center": [30.2450, 75.8420],
-        "zoom": 12,
-        "primary_sensor": "INSAT-3DR (TIR 1 & 2) + Resourcesat-2A LISS-IV",
-        "resolution": "5.8m (Optical) / 1km (Thermal)",
-        "acquisition_date": "2024-11-04 09:30 UTC",
-        "sun_elevation": "44.2°",
-        "sun_azimuth": "162.8°",
-        "description": "Post-monsoon Kharif paddy residue combustion tracking. Brightness temperature anomalies combined with Burn Area Index (BAI).",
-        "tags": ["Agriculture", "Thermal-IR", "INSAT-3DR", "Air-Quality", "Aerosol"],
+        "id": "scenario_sikkim",
+        "title": "2023 Sikkim Glacial Lake Outburst Flood (GLOF)",
+        "region": "Chungthang & Teesta Valley, Mangan, Sikkim",
+        "center": [27.6040, 88.6470],
+        "zoom": 13,
+        "primary_sensor": "Sentinel-1 C-Band SAR + Sentinel-2",
+        "resolution": "10m SAR / 0.8m Cartosat-2E",
+        "acquisition_date": "2023-10-04 03:30 UTC",
+        "sun_elevation": "49.6°",
+        "sun_azimuth": "142.1°",
+        "description": "South Lhonak glacial lake breach generated 20m high wall of water down Teesta river, destroying Chungthang Teesta-III Dam and submerging NH-10A.",
+        "tags": ["GLOF Flood", "Sikkim 2023", "Teesta River", "Dam Breach", "SAR Cloud Penetration"],
         "layers": {
-            "optical": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80",
-            "fcc": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
-            "sar": "https://images.unsplash.com/photo-1516214104703-d870798883c5?auto=format&fit=crop&w=1600&q=80",
-            "ndvi_overlay": "linear-gradient(135deg, rgba(239,68,68,0.8), rgba(249,115,22,0.6), rgba(34,197,94,0.3))",
-            "pre_event_date": "2024-10-20",
-            "post_event_date": "2024-11-04"
+            "optical": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=80",
+            "fcc": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+            "sar": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80",
+            "ndvi_overlay": "linear-gradient(135deg, rgba(59,130,246,0.7), rgba(239,68,68,0.6), rgba(34,197,94,0.3))",
+            "pre_event_date": "2023-09-28",
+            "post_event_date": "2023-10-04"
         },
-        "default_query": "Detect active stubble fire coordinates using Middle-Infrared thermal anomalies and quantify newly burnt acreage.",
+        "default_query": "Identify flooded rescue routes along Teesta river and locate marooned army personnel.",
         "grounding_presets": [
             {
-                "id": "g301",
-                "label": "Active Fire Front & Thermal Anomaly (TIR)",
+                "id": "s1",
+                "label": "Breached Teesta-III Hydro Dam & Inundation Surge",
                 "type": "polygon",
                 "color": "#ef4444",
                 "coordinates": [
-                    [30.238, 75.830],
-                    [30.252, 75.838],
-                    [30.248, 75.855],
-                    [30.232, 75.845]
+                    [27.6010, 88.6420],
+                    [27.6100, 88.6490],
+                    [27.6060, 88.6570],
+                    [27.5980, 88.6480]
                 ],
-                "area_km2": 3.84,
-                "confidence": 0.988,
-                "spectral_index": "BT (3.9µm): 338.4 K, ΔBT: +14.2 K",
-                "threat_level": "SEVERE",
-                "details": "Active flaming front with high PM2.5/PM10 emission rate (est. 480 kg/hr)."
+                "area_km2": 3.85,
+                "confidence": 0.984,
+                "spectral_index": "SAR Dual-Pol sigma0 < -24dB (Water Extent)",
+                "threat_level": "CRITICAL",
+                "details": "Dam wall breached by 22-meter surge. Powerhouse flooded and Chungthang township inundated."
             },
             {
-                "id": "g302",
-                "label": "Fresh Ash & Charred Crop Residue (BAI High)",
-                "type": "polygon",
-                "color": "#78716c",
+                "id": "s2",
+                "label": "Submerged NH-10A Lifeline Corridor",
+                "type": "polyline",
+                "color": "#f59e0b",
                 "coordinates": [
-                    [30.250, 75.850],
-                    [30.260, 75.860],
-                    [30.255, 75.875],
-                    [30.242, 75.865]
+                    [27.5950, 88.6380],
+                    [27.6040, 88.6470],
+                    [27.6120, 88.6540]
                 ],
-                "area_km2": 5.12,
-                "confidence": 0.952,
-                "spectral_index": "BAI: 0.89, NBR: -0.54",
-                "threat_level": "MEDIUM",
-                "details": "Charred field parcel burned within last 18 hours with complete organic topsoil degradation."
-            }
-        ]
-    },
-    {
-        "id": "scenario_kutch",
-        "title": "Gulf of Kutch Maritime Vessel & Strategic Creek Defense",
-        "region": "Sir Creek & Kandla Port Approach, Gujarat",
-        "center": [22.8500, 69.8500],
-        "zoom": 12,
-        "primary_sensor": "Cartosat-3 (0.28m PAN) + RISAT-1A SAR",
-        "resolution": "0.28m / 1.0m Spotlight SAR",
-        "acquisition_date": "2024-09-02 04:10 UTC",
-        "sun_elevation": "52.8°",
-        "sun_azimuth": "112.4°",
-        "description": "High-resolution coastal surveillance, unregistered fishing boat wake detection, and critical channel monitoring.",
-        "tags": ["Defense", "Maritime", "Cartosat-3", "Ship-Detection", "SAR"],
-        "layers": {
-            "optical": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80",
-            "fcc": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1600&q=80",
-            "sar": "https://images.unsplash.com/photo-1498084393753-b411b2d26b34?auto=format&fit=crop&w=1600&q=80",
-            "ndvi_overlay": "linear-gradient(135deg, rgba(14,165,233,0.7), rgba(99,102,241,0.5), rgba(244,63,94,0.7))",
-            "pre_event_date": "2024-08-20",
-            "post_event_date": "2024-09-02"
-        },
-        "default_query": "Identify all unauthorized motorized watercraft traversing within the 5 nautical mile exclusive security zone.",
-        "grounding_presets": [
-            {
-                "id": "g401",
-                "label": "High-Speed Interceptor Craft (Moving Target)",
-                "type": "polygon",
-                "color": "#f43f5e",
-                "coordinates": [
-                    [22.842, 69.838],
-                    [22.846, 69.840],
-                    [22.844, 69.844],
-                    [22.840, 69.842]
-                ],
-                "area_km2": 0.04,
+                "area_km2": 0.22,
                 "confidence": 0.991,
-                "spectral_index": "Kelvin Wake Angle: 19.5°, Speed: 24 kts",
-                "threat_level": "WARNING",
-                "details": "22m fast patrol hull displacing prominent turbulent hydrodynamic wake heading 045°."
+                "spectral_index": "NDWI: +0.82, Total Road Inundation",
+                "threat_level": "CRITICAL",
+                "details": "National Highway 10A severed across 4.6km. North Sikkim disconnected from Gangtok."
             },
             {
-                "id": "g402",
-                "label": "Commercial VLCC Tanker Berth",
-                "type": "polygon",
-                "color": "#38bdf8",
-                "coordinates": [
-                    [22.860, 69.865],
-                    [22.875, 69.870],
-                    [22.872, 69.882],
-                    [22.857, 69.877]
-                ],
-                "area_km2": 0.85,
-                "confidence": 0.997,
-                "spectral_index": "Radar RCS: +42 dBm²",
-                "threat_level": "NORMAL",
-                "details": "310m crude carrier moored at Single Point Mooring (SPM-2)."
-            }
-        ]
-    },
-    {
-        "id": "scenario_bengaluru",
-        "title": "Bengaluru Wetland Encroachment & Urban Heat Island",
-        "region": "Bellandur & Varthur Lake Catchment, Karnataka",
-        "center": [12.9350, 77.6850],
-        "zoom": 13,
-        "primary_sensor": "Resourcesat-2A (LISS-IV) Multi-Temporal",
-        "resolution": "5.8m Multispectral",
-        "acquisition_date": "2024-05-18 05:15 UTC",
-        "sun_elevation": "68.9°",
-        "sun_azimuth": "104.2°",
-        "description": "6-year multi-temporal analysis (2018 vs 2024) revealing 43% wetland loss due to concrete impervious surface expansion and buffer zone encroachment.",
-        "tags": ["Urban", "Temporal-Change", "NDBI", "Wetland", "Resourcesat"],
-        "layers": {
-            "optical": "https://images.unsplash.com/photo-1477959858617-67f30bc75b82?auto=format&fit=crop&w=1600&q=80",
-            "fcc": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1600&q=80",
-            "sar": "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1600&q=80",
-            "ndvi_overlay": "linear-gradient(135deg, rgba(234,88,12,0.8), rgba(234,179,8,0.5), rgba(16,185,129,0.4))",
-            "pre_event_date": "2018-04-12",
-            "post_event_date": "2024-05-18"
-        },
-        "default_query": "Quantify total wetland buffer zone conversion into concrete built-up area between 2018 and 2024.",
-        "grounding_presets": [
-            {
-                "id": "g501",
-                "label": "Illegal Land Reclamation in Lake Buffer (NDBI Spike)",
-                "type": "polygon",
-                "color": "#ea580c",
-                "coordinates": [
-                    [12.932, 77.678],
-                    [12.940, 77.685],
-                    [12.936, 77.698],
-                    [12.928, 77.689]
-                ],
-                "area_km2": 2.14,
-                "confidence": 0.976,
-                "spectral_index": "NDBI: +0.48 (Built-up), SAVI drop: -58%",
-                "threat_level": "VIOLATION",
-                "details": "Encroached 75m statutory green buffer with asphalt and concrete commercial footprint."
-            },
-            {
-                "id": "g502",
-                "label": "Hyper-Eutrophic Water Body (Algal Bloom / Hyacinth)",
+                "id": "s3",
+                "label": "Safe Army Forward Helipad (Mangan Ringhim)",
                 "type": "polygon",
                 "color": "#10b981",
                 "coordinates": [
-                    [12.939, 77.688],
-                    [12.944, 77.696],
-                    [12.940, 77.702],
-                    [12.935, 77.694]
+                    [27.5100, 88.5310],
+                    [27.5150, 88.5330],
+                    [27.5140, 88.5380],
+                    [27.5090, 88.5360]
                 ],
-                "area_km2": 1.78,
-                "confidence": 0.963,
-                "spectral_index": "NDRE: 0.62, Dissolved Oxygen: < 1.2 mg/L",
-                "threat_level": "ECOLOGICAL_HAZARD",
-                "details": "Complete surface weed coverage preventing sunlight penetration and gas exchange."
+                "area_km2": 0.58,
+                "confidence": 0.970,
+                "spectral_index": "High Ridge MSL 1,420m (Flood Free)",
+                "threat_level": "SAFE",
+                "details": "Army aviation helicopter launchpad for air-dropping satellite communication packs and MRE rations."
             }
         ]
     }

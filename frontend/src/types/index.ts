@@ -1,3 +1,5 @@
+export type Language = 'en' | 'hi' | 'ml';
+
 export interface GroundingItem {
   id: string;
   label: string;
@@ -7,7 +9,7 @@ export interface GroundingItem {
   area_km2?: number;
   confidence: number;
   spectral_index?: string;
-  threat_level?: string;
+  threat_level?: 'CRITICAL' | 'HIGH' | 'MODERATE' | 'SAFE' | string;
   details?: string;
 }
 
@@ -38,28 +40,105 @@ export interface Scenario {
   grounding_presets: GroundingItem[];
 }
 
-export interface ReasoningStep {
-  step: number;
-  title: string;
-  detail: string;
-  status: 'completed' | 'running' | 'pending';
-  badge: string;
+export interface HospitalInfo {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  status: string;
+  beds_available: number;
+  distance_km: number;
+  helipad_ready: boolean;
 }
 
-export interface QueryResponse {
+export interface BlockedRouteInfo {
+  id: string;
+  name: string;
+  coordinates: [number, number][];
+  status: string;
+  severity: string;
+  impact: string;
+  bypass_route?: string;
+}
+
+export interface SafeStagingZone {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  type: string;
+  capacity: string;
+  elevation_msl: string;
+}
+
+export interface FieldInfrastructure {
+  region: string;
+  hospitals: HospitalInfo[];
+  blocked_routes: BlockedRouteInfo[];
+  safe_staging_zones: SafeStagingZone[];
+}
+
+export interface RescueReport {
+  report_id: string;
+  language: Language;
+  title: string;
+  timestamp: string;
+  mission_title: string;
+  region: string;
+  primary_sensor: string;
+  executive_briefing: string;
+  severity_summary: {
+    critical_hazard_area_km2: number;
+    critical_hazard_count: number;
+    safe_zone_count: number;
+    overall_status: string;
+  };
+  critical_hazards: GroundingItem[];
+  blocked_infrastructure: BlockedRouteInfo[];
+  designated_hospitals: HospitalInfo[];
+  safe_staging_zones: SafeStagingZone[];
+  action_directives: string[];
+  generation_latency_seconds: number;
+}
+
+export interface LatencyBreakdown {
+  neural_inference_ms: number;
+  osm_infrastructure_ms: number;
+  rescue_report_ms: number;
+  total_pipeline_ms: number;
+  total_seconds: number;
+}
+
+export interface OfficerQueryResponse {
   scenario_id: string;
   query: string;
+  language: Language;
   response_text: string;
-  reasoning_steps: ReasoningStep[];
+  focused_id?: string;
   grounding: GroundingItem[];
-  metrics: {
+  neural_segmentation: {
+    hazard_type: string;
+    neural_model: string;
+    pixels_segmented: number;
     total_area_km2: number;
-    confidence_score: number;
-    features_detected: number;
-    spatial_resolution: string;
-    primary_sensor: string;
+    mean_confidence: number;
+    generated_polygon: [number, number][];
+    inference_latency_ms: number;
   };
-  suggested_queries: string[];
+  field_infrastructure: FieldInfrastructure;
+  rescue_report: RescueReport;
+  latency_breakdown: LatencyBreakdown;
+}
+
+export interface Message {
+  id: string;
+  sender: 'user' | 'assistant';
+  text: string;
+  timestamp: string;
+  grounding?: GroundingItem[];
+  rescue_report?: RescueReport;
+  latency?: LatencyBreakdown;
+  suggested_queries?: string[];
 }
 
 export interface SpectralIndex {
@@ -72,60 +151,4 @@ export interface SpectralIndex {
   labels: string[];
   mean_value: number;
   histogram: number[];
-}
-
-export interface TemporalTransition {
-  from_class: string;
-  to_class: string;
-  area_ha: number;
-  pct: string;
-}
-
-export interface TemporalAnalysis {
-  pre_date: string;
-  post_date: string;
-  event_type: string;
-  overall_damage_severity: string;
-  area_displaced_km2: number;
-  metrics: Record<string, any>;
-  land_cover_transition: TemporalTransition[];
-}
-
-export interface DossierData {
-  classification: string;
-  report_id: string;
-  generated_timestamp: string;
-  organization: string;
-  mission_title: string;
-  spatial_coverage: {
-    region: string;
-    bounding_coordinates: {
-      center_lat: number;
-      center_lon: number;
-      approx_footprint_km2: number;
-    };
-  };
-  sensor_telemetry: {
-    primary_payload: string;
-    ground_sampling_distance: string;
-    orbit_pass_type: string;
-    sun_illumination: {
-      elevation: string;
-      azimuth: string;
-    };
-    cloud_cover_percentage: string;
-  };
-  query_objective: string;
-  key_grounding_findings: GroundingItem[];
-  vulnerability_assessment: {
-    threat_rating: string;
-    affected_population_estimate: string;
-    critical_lifelines_impacted: string[];
-  };
-  actionable_directives: string[];
-  signatory: {
-    authorized_by: string;
-    verification_hash: string;
-    nodal_agency: string;
-  };
 }
